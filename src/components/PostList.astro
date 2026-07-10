@@ -1,0 +1,49 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+interface Props {
+  posts: CollectionEntry<'writing'>[];
+  showMeta?: boolean;
+}
+
+const { posts, showMeta = false } = Astro.props;
+
+const fmt = new Intl.DateTimeFormat('en', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<div class="link-group vertical">
+  {
+    posts.map((post) => {
+      const external = post.data.externalUrl;
+      const href = external ?? `/writing/${post.id}/`;
+      return (
+        <div class="post-entry" data-animate>
+          <a
+            href={href}
+            class="link magnetic"
+            data-strength="20"
+            {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            {post.data.title}
+            {external && <Icon name="arrow-up-right" size={14} />}
+          </a>
+          {showMeta && (
+            <p class="post-meta">
+              <time datetime={post.data.date.toISOString().slice(0, 10)}>
+                {fmt.format(post.data.date)}
+              </time>
+              {' — '}
+              {post.data.description}
+            </p>
+          )}
+        </div>
+      );
+    })
+  }
+</div>

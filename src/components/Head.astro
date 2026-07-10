@@ -1,0 +1,40 @@
+---
+import { site } from '../data/site';
+import { DEFAULT_THEME } from '../data/themes';
+
+interface Props {
+  title: string;
+  description: string;
+  ogType?: string;
+  ogImage?: string;
+}
+
+const { title, description, ogType = 'website', ogImage = '/og-default.png' } = Astro.props;
+
+const fullTitle = title === site.name ? title : `${title} · ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(ogImage, Astro.site);
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
+<meta name="theme-color" content={DEFAULT_THEME.bg} />
+<meta name="generator" content={Astro.generator} />
+
+<meta property="og:title" content={fullTitle} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:site_name" content={site.name} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />

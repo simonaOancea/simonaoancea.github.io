@@ -1,0 +1,189 @@
+---
+import { themes } from '../data/themes';
+import Icon from './Icon.astro';
+---
+
+<div class="theme-picker" data-theme-picker>
+  <button
+    type="button"
+    class="picker-toggle"
+    aria-label="Choose theme"
+    aria-haspopup="true"
+    aria-expanded="false"
+  >
+    <Icon name="palette" size={20} />
+  </button>
+  <div class="picker-popover" role="group" aria-label="Color themes" hidden>
+    {
+      themes.map((t) => (
+        <button
+          type="button"
+          class="picker-option"
+          data-theme-id={t.id}
+          data-scheme={t.scheme}
+          data-bg={t.bg}
+          aria-pressed="false"
+        >
+          <span class="swatch" aria-hidden="true" style={`--swatch-bg: ${t.bg}; --swatch-accent: ${t.accent};`} />
+          <span class="option-label">{t.label}</span>
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .theme-picker {
+    position: fixed;
+    right: var(--space-lg);
+    bottom: var(--space-lg);
+    z-index: 150;
+  }
+
+  .picker-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--transition-normal),
+      border-color var(--transition-normal),
+      transform var(--transition-normal);
+  }
+
+  .picker-toggle:hover {
+    color: var(--color-accent);
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+  }
+
+  .picker-popover {
+    position: absolute;
+    right: 0;
+    bottom: 52px;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: color-mix(in srgb, var(--color-bg-secondary) 92%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .picker-popover[hidden] {
+    display: none;
+  }
+
+  .picker-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 8px 10px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .picker-option:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+  }
+
+  .picker-option[aria-pressed='true'] {
+    color: var(--color-text);
+  }
+
+  .picker-option[aria-pressed='true'] .option-label::after {
+    content: ' ✓';
+    color: var(--color-accent);
+  }
+
+  .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex: none;
+    background: linear-gradient(135deg, var(--swatch-bg) 50%, var(--swatch-accent) 50%);
+    border: 1px solid var(--color-border-hover);
+  }
+</style>
+
+<script>
+  const picker = document.querySelector<HTMLElement>('[data-theme-picker]');
+  const toggle = picker?.querySelector<HTMLButtonElement>('.picker-toggle');
+  const popover = picker?.querySelector<HTMLElement>('.picker-popover');
+
+  if (picker && toggle && popover) {
+    const options = [...picker.querySelectorAll<HTMLButtonElement>('.picker-option')];
+
+    const syncPressed = () => {
+      const active = document.documentElement.getAttribute('data-theme');
+      for (const o of options) {
+        o.setAttribute('aria-pressed', String(o.dataset.themeId === active));
+      }
+    };
+
+    const close = () => {
+      popover.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    const open = () => {
+      popover.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      syncPressed();
+    };
+
+    toggle.addEventListener('click', () => (popover.hidden ? open() : close()));
+
+    for (const o of options) {
+      o.addEventListener('click', () => {
+        const { themeId, scheme, bg } = o.dataset;
+        if (!themeId || !scheme || !bg) return;
+        const root = document.documentElement;
+        root.setAttribute('data-theme', themeId);
+        root.setAttribute('data-scheme', scheme);
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg);
+        try {
+          localStorage.setItem('theme', themeId);
+        } catch {
+          /* locked-down storage: theme still applies for this page view */
+        }
+        syncPressed();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target instanceof Node && !picker.contains(e.target)) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !popover.hidden) {
+        close();
+        toggle.focus();
+      }
+    });
+
+    syncPressed();
+  }
+</script>

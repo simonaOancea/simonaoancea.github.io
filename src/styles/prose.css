@@ -1,0 +1,138 @@
+/* ========================================
+   Article typography + code blocks.
+   Imported only by ArticleLayout (and anywhere long-form prose renders).
+======================================== */
+
+.blog-post {
+  max-width: 680px;
+}
+
+.blog-title {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.blog-meta {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  margin-top: var(--space-sm);
+}
+
+.blog-body {
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-top: var(--space-2xl);
+}
+
+.blog-body h2 {
+  font-family: var(--font-title);
+  color: var(--color-text);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: var(--space-2xl) 0 var(--space-md);
+}
+
+.blog-body h3 {
+  font-family: var(--font-title);
+  color: var(--color-text);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: var(--space-xl) 0 var(--space-sm);
+}
+
+.blog-body p {
+  margin-bottom: var(--space-lg);
+}
+
+.blog-body strong {
+  color: var(--color-text);
+}
+
+.blog-body a {
+  border-bottom: 1px solid var(--color-border-hover);
+}
+
+.blog-body a:hover {
+  border-color: var(--color-accent);
+}
+
+.blog-body ul,
+.blog-body ol {
+  margin: 0 0 var(--space-lg) 1.25em;
+}
+
+.blog-body li {
+  margin-bottom: var(--space-xs);
+}
+
+.blog-body blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: var(--space-lg);
+  color: var(--color-text-dim);
+  font-style: italic;
+  margin-bottom: var(--space-lg);
+}
+
+.blog-body img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+}
+
+.blog-body hr {
+  border: none;
+  height: 1px;
+  background: var(--color-border-hover);
+  margin: var(--space-2xl) 0;
+}
+
+/* Inline code chips */
+.blog-body code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.15em 0.4em;
+  color: var(--color-text);
+}
+
+.blog-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* ========================================
+   Shiki code blocks.
+   shikiConfig uses defaultColor:false, which emits --shiki-light/--shiki-dark
+   per token and NOTHING else — without the two [data-scheme] rules below,
+   code is invisible. The site theme's data-scheme picks the palette.
+   !important on background: Shiki sets an inline background-color.
+======================================== */
+.astro-code {
+  font-family: var(--font-mono);
+  background: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+[data-scheme='light'] .astro-code span {
+  color: var(--shiki-light);
+}
+
+[data-scheme='dark'] .astro-code span {
+  color: var(--shiki-dark);
+}

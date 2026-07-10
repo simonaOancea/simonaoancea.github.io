@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import TalkList from '../components/TalkList.astro';
+import WorkList from '../components/WorkList.astro';
+import PostList from '../components/PostList.astro';
+import { site } from '../data/site';
+import { currently, previously } from '../data/work';
+
+// Drafts are visible in `npm run dev` but never in the built site.
+const posts = (await getCollection('writing', (e) => import.meta.env.DEV || !e.data.draft)).sort(
+  (a, b) => +b.data.date - +a.data.date
+);
+const recent = posts.slice(0, 4);
+---
+
+<Layout title={site.title} description={site.description}>
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="title">
+        <span class="title-line" data-animate>Hey, I'm Simona.</span>
+      </h1>
+      <p class="intro" data-animate>
+        TODO: your one-line intro — what you build, and what you care about.
+      </p>
+    </div>
+  </section>
+
+  <TalkList />
+
+  <section class="work" data-animate>
+    <h2 class="section-title">Currently</h2>
+    <WorkList items={currently} />
+  </section>
+
+  <section class="previously" data-animate>
+    <h2 class="section-title">Previously</h2>
+    <WorkList items={previously} />
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section class="links" data-animate>
+        <h2 class="section-title">Writing</h2>
+        <PostList posts={recent} />
+        <a class="all-writing magnetic" data-strength="20" href="/writing/">
+          All writing →
+        </a>
+      </section>
+    )
+  }
+</Layout>

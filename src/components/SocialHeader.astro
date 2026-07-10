@@ -1,0 +1,36 @@
+---
+import { socials } from '../data/socials';
+import Icon from './Icon.astro';
+
+interface Props {
+  withBack?: boolean;
+}
+
+const { withBack = false } = Astro.props;
+---
+
+<nav class:list={['social-header', { 'has-back': withBack }]} aria-label="Site navigation">
+  {
+    withBack && (
+      <a href="/" class="back-link magnetic" data-strength="20">
+        <Icon name="arrow-left" size={16} />
+        <span>Back</span>
+      </a>
+    )
+  }
+  <div class="social-icons">
+    {
+      socials.map((s) => (
+        <a
+          href={s.url}
+          class="social-icon magnetic"
+          data-strength="30"
+          aria-label={s.label}
+          {...(s.url.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}
+        >
+          <Icon name={s.icon} size={18} />
+        </a>
+      ))
+    }
+  </div>
+</nav>

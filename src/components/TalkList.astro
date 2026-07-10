@@ -1,0 +1,87 @@
+---
+import { talks } from '../data/talks';
+import type { Talk } from '../data/schemas';
+
+const DAY_MS = 86_400_000;
+const now = Date.now();
+
+// A talk stays "upcoming" through the whole of its final day: dates parse as
+// UTC midnight and the +24h grace covers European timezones on the UTC build
+// runner. The split is computed at build time — the weekly deploy cron keeps
+// it fresh between content pushes.
+const cutoff = (t: Talk) => (t.endDate ?? t.date).getTime() + DAY_MS;
+
+const upcoming = talks.filter((t) => cutoff(t) >= now).sort((a, b) => +a.date - +b.date);
+const past = talks.filter((t) => cutoff(t) < now).sort((a, b) => +b.date - +a.date);
+
+const fmt = new Intl.DateTimeFormat('en', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const talkDate = (t: Talk) => (t.endDate ? fmt.formatRange(t.date, t.endDate) : fmt.format(t.date));
+---
+
+{
+  talks.length > 0 && (
+    <section class="work" id="speaking" data-animate>
+      <h2 class="section-title">Speaking</h2>
+      {upcoming.length > 0 && (
+        <ul class="work-list">
+          {upcoming.map((t) => (
+            <li class="work-item" data-animate>
+              <span class="bullet" aria-hidden="true">→</span>
+              <span class="work-text">
+                <strong>{t.title}</strong> —{' '}
+                {t.conferenceUrl ? (
+                  <a class="inline-link" href={t.conferenceUrl} target="_blank" rel="noopener">
+                    {t.conference}
+                  </a>
+                ) : (
+                  t.conference
+                )}
+                , {t.city}
+              </span>
+              <span class="date">{talkDate(t)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {past.length > 0 && (
+        <>
+          <h3 class="past-title">Past</h3>
+          <ul class="work-list">
+            {past.map((t) => (
+              <li class="work-item is-past" data-animate>
+                <span class="bullet" aria-hidden="true">→</span>
+                <span class="work-text">
+                  <strong>{t.title}</strong> —{' '}
+                  {t.conferenceUrl ? (
+                    <a class="inline-link" href={t.conferenceUrl} target="_blank" rel="noopener">
+                      {t.conference}
+                    </a>
+                  ) : (
+                    t.conference
+                  )}
+                  , {t.city}
+                  {(t.slidesUrl || t.videoUrl) && (
+                    <span class="talk-links">
+                      {t.slidesUrl && (
+                        <a href={t.slidesUrl} target="_blank" rel="noopener">slides</a>
+                      )}
+                      {t.videoUrl && (
+                        <a href={t.videoUrl} target="_blank" rel="noopener">video</a>
+                      )}
+                    </span>
+                  )}
+                </span>
+                <span class="date">{talkDate(t)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
+  )
+}

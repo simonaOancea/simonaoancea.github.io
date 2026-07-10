@@ -1,0 +1,21 @@
+---
+import type { WorkItem } from '../data/schemas';
+
+interface Props {
+  items: WorkItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="work-list">
+  {
+    items.map((item) => (
+      <li class="work-item" data-animate>
+        <span class="bullet" aria-hidden="true">→</span>
+        <span class="work-text" set:html={item.text} />
+        {item.date && <span class="date">{item.date}</span>}
+      </li>
+    ))
+  }
+</ul>

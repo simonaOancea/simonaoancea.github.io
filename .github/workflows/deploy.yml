@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Manual redeploy button (Actions tab -> Deploy to GitHub Pages -> Run workflow).
+  workflow_dispatch:
+  # Weekly rebuild (Mondays 04:20 UTC) so talks roll from Upcoming to Past
+  # without a commit. GitHub disables cron workflows after ~60 days without
+  # repo activity — if a past talk shows as upcoming, press Run workflow.
+  schedule:
+    - cron: '20 4 * * 1'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: withastro/action@v6
+        with:
+          node-version: 22
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PostList from '../../components/PostList.astro';
+import { site } from '../../data/site';
+
+const posts = (await getCollection('writing', (e) => import.meta.env.DEV || !e.data.draft)).sort(
+  (a, b) => +b.data.date - +a.data.date
+);
+---
+
+<Layout title="Writing" description={`Writing by ${site.name}.`} withBack>
+  <section>
+    <h1 class="title title--page" data-animate>Writing</h1>
+    {
+      posts.length > 0 ? (
+        <PostList posts={posts} showMeta />
+      ) : (
+        <p class="intro" data-animate>
+          Nothing here yet.
+        </p>
+      )
+    }
+  </section>
+</Layout>

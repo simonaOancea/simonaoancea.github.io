@@ -1,0 +1,37 @@
+---
+import Layout from './Layout.astro';
+import '../styles/prose.css';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    date: Date;
+  };
+}
+
+const { frontmatter } = Astro.props;
+
+const fmt = new Intl.DateTimeFormat('en', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Layout title={frontmatter.title} description={frontmatter.description} ogType="article" withBack>
+  <article class="blog-post">
+    <header class="blog-header" data-animate>
+      <h1 class="blog-title">{frontmatter.title}</h1>
+      <p class="blog-meta">
+        <time datetime={frontmatter.date.toISOString().slice(0, 10)}>
+          {fmt.format(frontmatter.date)}
+        </time>
+      </p>
+    </header>
+    <div class="blog-body" data-animate>
+      <slot />
+    </div>
+  </article>
+</Layout>
