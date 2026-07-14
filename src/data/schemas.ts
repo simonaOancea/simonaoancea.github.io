@@ -1,6 +1,6 @@
 import { z } from 'astro/zod';
 
-export const talkSchema = z.object({
+export const engagementSchema = z.object({
   title: z.string(),
   conference: z.string(),
   conferenceUrl: z.string().url().optional(),
@@ -9,8 +9,11 @@ export const talkSchema = z.object({
   endDate: z.coerce.date().optional(),
   slidesUrl: z.string().url().optional(),
   videoUrl: z.string().url().optional(),
+  // Slug of a talk page in src/content/talks/ — links this engagement to its
+  // talk-as-product page (delivery history + title link).
+  talk: z.string().optional(),
 });
-export type Talk = z.infer<typeof talkSchema>;
+export type Engagement = z.infer<typeof engagementSchema>;
 
 export const workItemSchema = z.object({
   // May contain <strong> and <a class="inline-link"> — rendered as HTML.

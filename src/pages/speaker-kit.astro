@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { socials } from '../data/socials';
+
+// Your existing bios (your words, ready to paste in):
+//   ~/Presentations/The Architecture Decision You Can Undo/speaker-bio.md
+//   ~/Presentations/The Architecture Decision You Can Undo/speaker-bio-devoxx-morocco.md
+// Headshot: add public/headshot.jpg, then swap the TODO below for
+//   <img class="kit-headshot" src="/headshot.jpg" alt="Simona Oancea" width="400" />
+//   and a plain <a href="/headshot.jpg" download>download</a> link.
+
+const email = socials.find((s) => s.icon === 'email');
+---
+
+<Layout title="Speaker kit" description="Bio, headshot and facts for event organizers." withBack>
+  <section class="kit">
+    <h1 class="title title--page" data-animate>Speaker kit</h1>
+
+    <div data-animate>
+      <h2 class="section-title">Short bio</h2>
+      <p class="kit-text">TODO: the 50–70 word bio organizers paste into programs.</p>
+    </div>
+
+    <div data-animate>
+      <h2 class="section-title">Long bio</h2>
+      <p class="kit-text">TODO: the fuller version, for event pages that want more.</p>
+    </div>
+
+    <div data-animate>
+      <h2 class="section-title">Headshot</h2>
+      <p class="kit-text">TODO: add a downloadable headshot (see the comment in this file).</p>
+    </div>
+
+    <div data-animate>
+      <h2 class="section-title">Facts</h2>
+      <ul class="work-list">
+        <li class="work-item">
+          <span class="bullet" aria-hidden="true">→</span>
+          <span class="work-text">Based in <strong>TODO: city</strong></span>
+        </li>
+        <li class="work-item">
+          <span class="bullet" aria-hidden="true">→</span>
+          <span class="work-text">Speaks <strong>TODO: languages</strong></span>
+        </li>
+        <li class="work-item">
+          <span class="bullet" aria-hidden="true">→</span>
+          <span class="work-text">Talks about <strong>TODO: topics</strong></span>
+        </li>
+        {
+          email && (
+            <li class="work-item">
+              <span class="bullet" aria-hidden="true">→</span>
+              <span class="work-text">
+                Booking: <a class="inline-link" href={email.url}>email</a>
+              </span>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+  </section>
+</Layout>

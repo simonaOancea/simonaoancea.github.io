@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import { engagements } from '../data/engagements';
+import type { Engagement } from '../data/schemas';
+import { formatDateRange } from '../lib/format';
+
+const DAY_MS = 86_400_000;
+const now = Date.now();
+
+// An engagement stays "upcoming" through the whole of its final day: dates
+// parse as UTC midnight and the +24h grace covers European timezones on the
+// UTC build runner. The split is computed at build time — the weekly deploy
+// cron keeps it fresh between content pushes.
+const cutoff = (e: Engagement) => (e.endDate ?? e.date).getTime() + DAY_MS;
+
+const upcoming = engagements.filter((e) => cutoff(e) >= now).sort((a, b) => +a.date - +b.date);
+const past = engagements.filter((e) => cutoff(e) < now).sort((a, b) => +b.date - +a.date);
+
+// Titles link to their talk page only when that page is actually published
+// (or in dev), so a draft talk never produces a dead link.
+const talkPages = await getCollection('talks', (t) => import.meta.env.DEV || !t.data.draft);
+const linkable = new Set(talkPages.map((t) => t.id));
+const talkHref = (e: Engagement) =>
+  e.talk && linkable.has(e.talk) ? `/talks/${e.talk}/` : undefined;
+---
+
+{
+  engagements.length > 0 && (
+    <section class="work" id="speaking" data-animate>
+      <h2 class="section-title">Speaking</h2>
+      {upcoming.length > 0 && (
+        <ul class="work-list">
+          {upcoming.map((e) => (
+            <li class="work-item" data-animate>
+              <span class="bullet" aria-hidden="true">→</span>
+              <span class="work-text">
+                {talkHref(e) ? (
+                  <a class="inline-link" href={talkHref(e)}>
+                    <strong>{e.title}</strong>
+                  </a>
+                ) : (
+                  <strong>{e.title}</strong>
+                )}{' '}
+                —{' '}
+                {e.conferenceUrl ? (
+                  <a class="inline-link" href={e.conferenceUrl} target="_blank" rel="noopener">
+                    {e.conference}
+                  </a>
+                ) : (
+                  e.conference
+                )}
+                , {e.city}
+              </span>
+              <span class="date">{formatDateRange(e.date, e.endDate)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {past.length > 0 && (
+        <>
+          <h3 class="past-title">Past</h3>
+          <ul class="work-list">
+            {past.map((e) => (
+              <li class="work-item is-past" data-animate>
+                <span class="bullet" aria-hidden="true">→</span>
+                <span class="work-text">
+                  {talkHref(e) ? (
+                    <a class="inline-link" href={talkHref(e)}>
+                      <strong>{e.title}</strong>
+                    </a>
+                  ) : (
+                    <strong>{e.title}</strong>
+                  )}{' '}
+                  —{' '}
+                  {e.conferenceUrl ? (
+                    <a class="inline-link" href={e.conferenceUrl} target="_blank" rel="noopener">
+                      {e.conference}
+                    </a>
+                  ) : (
+                    e.conference
+                  )}
+                  , {e.city}
+                  {(e.slidesUrl || e.videoUrl) && (
+                    <span class="talk-links">
+                      {e.slidesUrl && (
+                        <a href={e.slidesUrl} target="_blank" rel="noopener">slides</a>
+                      )}
+                      {e.videoUrl && (
+                        <a href={e.videoUrl} target="_blank" rel="noopener">video</a>
+                      )}
+                    </span>
+                  )}
+                </span>
+                <span class="date">{formatDateRange(e.date, e.endDate)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
+  )
+}

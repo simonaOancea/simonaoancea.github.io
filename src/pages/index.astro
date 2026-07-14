@@ -1,17 +1,24 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import TalkList from '../components/TalkList.astro';
+import TalkCard from '../components/TalkCard.astro';
+import EngagementList from '../components/EngagementList.astro';
 import WorkList from '../components/WorkList.astro';
 import PostList from '../components/PostList.astro';
 import { site } from '../data/site';
+import { socials } from '../data/socials';
 import { currently, previously } from '../data/work';
 
 // Drafts are visible in `npm run dev` but never in the built site.
+const talks = (await getCollection('talks', (t) => import.meta.env.DEV || !t.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
 const posts = (await getCollection('writing', (e) => import.meta.env.DEV || !e.data.draft)).sort(
   (a, b) => +b.data.date - +a.data.date
 );
 const recent = posts.slice(0, 4);
+
+const email = socials.find((s) => s.icon === 'email');
 ---
 
 <Layout title={site.title} description={site.description}>
@@ -23,10 +30,28 @@ const recent = posts.slice(0, 4);
       <p class="intro" data-animate>
         TODO: your one-line intro — what you build, and what you care about.
       </p>
+      <p class="hero-cta" data-animate>
+        I speak about <strong>TODO: your topics</strong>. Want a talk at your event?
+        {email && <a href={email.url}>Email me</a>}
+        · <a href="/speaker-kit/">Speaker kit</a>
+      </p>
     </div>
   </section>
 
-  <TalkList />
+  {
+    talks.length > 0 && (
+      <section class="work" id="talks" data-animate>
+        <h2 class="section-title">Talks</h2>
+        <div class="talk-list">
+          {talks.map((talk) => (
+            <TalkCard talk={talk} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <EngagementList />
 
   <section class="work" data-animate>
     <h2 class="section-title">Currently</h2>

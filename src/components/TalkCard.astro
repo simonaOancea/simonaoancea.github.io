@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  talk: CollectionEntry<'talks'>;
+}
+
+const { talk } = Astro.props;
+---
+
+<div class="talk-card" data-animate>
+  <a class="talk-title magnetic" data-strength="20" href={`/talks/${talk.id}/`}>
+    {talk.data.title}
+  </a>
+  <p class="talk-hook">{talk.data.hook}</p>
+  <p class="talk-meta">{talk.data.audience} · {talk.data.duration} · {talk.data.language}</p>
+</div>

@@ -1,0 +1,123 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/prose.css';
+import { engagements } from '../../data/engagements';
+import { formatDateRange } from '../../lib/format';
+import { socials } from '../../data/socials';
+
+export async function getStaticPaths() {
+  // Drafts only get a page in dev — same rule as Writing.
+  const talks = await getCollection('talks', (t) => import.meta.env.DEV || !t.data.draft);
+  return talks.map((talk) => ({ params: { slug: talk.id }, props: { talk } }));
+}
+
+const { talk } = Astro.props;
+const { Content } = await render(talk);
+
+// Delivery history: every engagement linked to this talk via its `talk` slug.
+const DAY_MS = 86_400_000;
+const now = Date.now();
+const related = engagements.filter((e) => e.talk === talk.id);
+const cutoff = (e: (typeof related)[number]) => (e.endDate ?? e.date).getTime() + DAY_MS;
+const upcoming = related.filter((e) => cutoff(e) >= now).sort((a, b) => +a.date - +b.date);
+const past = related.filter((e) => cutoff(e) < now).sort((a, b) => +b.date - +a.date);
+
+const email = socials.find((s) => s.icon === 'email');
+---
+
+<Layout title={talk.data.title} description={talk.data.hook} ogType="article" withBack>
+  <article class="blog-post">
+    <header class="blog-header" data-animate>
+      <h1 class="blog-title">{talk.data.title}</h1>
+      <p class="talk-meta">
+        {talk.data.audience} · {talk.data.duration} · {talk.data.language}
+      </p>
+    </header>
+
+    <div class="blog-body" data-animate>
+      <Content />
+    </div>
+
+    {
+      talk.data.deckUrl && (
+        <p class="deck-link" data-animate>
+          <a href={talk.data.deckUrl} target="_blank" rel="noopener">
+            View the current deck →
+          </a>
+        </p>
+      )
+    }
+
+    {
+      upcoming.length > 0 && (
+        <section class="deliveries" data-animate>
+          <h2 class="section-title">Catch it live</h2>
+          <ul class="work-list">
+            {upcoming.map((e) => (
+              <li class="work-item" data-animate>
+                <span class="bullet" aria-hidden="true">→</span>
+                <span class="work-text">
+                  {e.conferenceUrl ? (
+                    <a class="inline-link" href={e.conferenceUrl} target="_blank" rel="noopener">
+                      {e.conference}
+                    </a>
+                  ) : (
+                    e.conference
+                  )}
+                  , {e.city}
+                </span>
+                <span class="date">{formatDateRange(e.date, e.endDate)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      past.length > 0 && (
+        <section class="deliveries" data-animate>
+          <h2 class="section-title">Past deliveries</h2>
+          <ul class="work-list">
+            {past.map((e) => (
+              <li class="work-item is-past" data-animate>
+                <span class="bullet" aria-hidden="true">→</span>
+                <span class="work-text">
+                  {e.conferenceUrl ? (
+                    <a class="inline-link" href={e.conferenceUrl} target="_blank" rel="noopener">
+                      {e.conference}
+                    </a>
+                  ) : (
+                    e.conference
+                  )}
+                  , {e.city}
+                  {(e.slidesUrl || e.videoUrl) && (
+                    <span class="talk-links">
+                      {e.slidesUrl && (
+                        <a href={e.slidesUrl} target="_blank" rel="noopener">slides</a>
+                      )}
+                      {e.videoUrl && (
+                        <a href={e.videoUrl} target="_blank" rel="noopener">video</a>
+                      )}
+                    </span>
+                  )}
+                </span>
+                <span class="date">{formatDateRange(e.date, e.endDate)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      email && (
+        <p class="talk-cta" data-animate>
+          Want this talk at your event? <a href={email.url}>Get in touch</a> or grab the{' '}
+          <a href="/speaker-kit/">speaker kit</a>.
+        </p>
+      )
+    }
+  </article>
+</Layout>

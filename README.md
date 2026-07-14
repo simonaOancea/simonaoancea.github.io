@@ -22,11 +22,18 @@ npm run check     # typecheck (also validates the data files)
 Everything marked `TODO` is placeholder. The site is live but anonymous-safe
 until you do this pass — nothing real renders that you didn't write.
 
+- [ ] `src/content/talks/modulith.md` — **review the pre-filled abstract**
+      (your words, from talk-abstract-final.md), fill the takeaways, verify
+      audience/duration, then flip `draft: false` to publish
+- [ ] `src/content/talks/agentic.md` — fill in once the Devoxx CFP resolves
+- [ ] `src/pages/index.astro` — the hero `intro` line + the CTA topics line
 - [ ] `src/data/site.ts` — site `description` (search results + link previews)
-- [ ] `src/pages/index.astro` — the hero `intro` line
 - [ ] `src/data/socials.ts` — LinkedIn URL, public email (GitHub is already real)
-- [ ] `src/data/talks.ts` — uncomment your four 2026 talks and **verify every
-      date, URL and city** against the conference sites
+- [ ] `src/data/engagements.ts` — uncomment your four 2026 engagements and
+      **verify every date, URL and city** against the conference sites
+- [ ] `src/pages/speaker-kit.astro` — short bio, long bio, facts (your existing
+      bios are referenced in a comment at the top of the file); add
+      `public/headshot.jpg`
 - [ ] `src/data/work.ts` — `currently` and `previously` items
 - [ ] `src/pages/404.astro` — the not-found line
 - [ ] `public/favicon.svg` — replace the placeholder "S." monogram
@@ -34,17 +41,24 @@ until you do this pass — nothing real renders that you didn't write.
 - [ ] Delete the two `example-*.md` files in `src/content/writing/` when you
       publish your first real article
 
-## How to add a talk
+## Talks: two concepts
 
-Open `src/data/talks.ts`, copy the template comment at the top into the array,
-fill it in, commit, push. The site sorts by date and groups Upcoming vs Past
-automatically — a talk moves to Past after its final day (`endDate` for
-multi-day conferences). Once past, `slidesUrl`/`videoUrl` render as links.
+**Talk pages** (`src/content/talks/*.md`) are the products — one page per
+bookable talk with abstract, takeaways, audience/duration meta and an optional
+`deckUrl`. The filename is the URL (`modulith.md` → `/talks/modulith/` — the
+short link for your last slide). `draft: true` = visible in dev only.
+
+**Engagements** (`src/data/engagements.ts`) are deliveries of a talk at an
+event. Copy the template comment, fill it in, commit. The site sorts and
+groups Upcoming vs Past by date automatically — an engagement moves to Past
+after its final day (`endDate` for multi-day events), and its
+`slidesUrl`/`videoUrl` then render as links. Set `talk: '<slug>'` to link the
+engagement to its talk page and list it in that page's delivery history.
 
 The Upcoming→Past split is computed at build time. A weekly scheduled deploy
 (Mondays 04:20 UTC) keeps it fresh without commits. GitHub pauses cron
-workflows after ~60 days of repo inactivity — if a past talk still shows as
-upcoming, go to Actions → Deploy to GitHub Pages → Run workflow.
+workflows after ~60 days of repo inactivity — if a past engagement still shows
+as upcoming, go to Actions → Deploy to GitHub Pages → Run workflow.
 
 ## How to add an article
 

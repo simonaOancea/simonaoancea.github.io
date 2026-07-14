@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import TalkCard from '../../components/TalkCard.astro';
+import { site } from '../../data/site';
+
+const talks = (await getCollection('talks', (t) => import.meta.env.DEV || !t.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<Layout title="Talks" description={`Talks by ${site.name} — abstracts, decks and recordings.`} withBack>
+  <section>
+    <h1 class="title title--page" data-animate>Talks</h1>
+    {
+      talks.length > 0 ? (
+        <div class="talk-list">
+          {talks.map((talk) => (
+            <TalkCard talk={talk} />
+          ))}
+        </div>
+      ) : (
+        <p class="intro" data-animate>
+          Nothing here yet.
+        </p>
+      )
+    }
+  </section>
+</Layout>
