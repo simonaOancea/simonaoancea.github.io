@@ -2,9 +2,10 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// User site (simonaoancea.github.io) is served at the domain root — never add `base`.
+// Custom domain (canonical). simonaoancea.github.io and simonaoancea.dev
+// both 301 here. Served at the domain root — never add `base`.
 export default defineConfig({
-  site: 'https://simonaoancea.github.io',
+  site: 'https://simonaoancea.com',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {

@@ -78,11 +78,12 @@ block) + one row in `src/data/themes.ts`. Nothing else changes.
   `astro.config.mjs`).
 - Pages source is **GitHub Actions** (repo Settings → Pages). The workflow
   builds and deploys on push, manual dispatch, and the weekly cron.
-- **Custom domain later:** add the domain to `public/CNAME` (it must live in
-  the repo — Actions deploys overwrite dashboard-set CNAMEs), set it in
-  Settings → Pages, update `site` in `astro.config.mjs`, point DNS
-  (`CNAME www → simonaoancea.github.io`, apex `A` records
-  185.199.108.153/109/110/111), then tick Enforce HTTPS.
+- **Custom domain (done 2026-07-14):** canonical is `https://simonaoancea.com`
+  (`public/CNAME` + Pages custom domain + `site` in astro.config). DNS lives at
+  Cloudflare, all records "DNS only"/grey-cloud (apex `A` 185.199.108-111.153,
+  `CNAME www → simonaoancea.github.io`). `simonaoancea.dev` 301-redirects to
+  the .com via a Cloudflare redirect rule; `simonaoancea.github.io` 301s
+  automatically. Both domains renew yearly at Cloudflare Registrar.
 
 ## Versions
 
