@@ -9,6 +9,7 @@
 
 .blog-title {
   font-family: var(--font-title);
+  font-variation-settings: var(--font-title-settings);
   font-weight: 700;
   font-size: clamp(2rem, 6vw, 2.75rem);
   letter-spacing: -0.02em;
@@ -32,6 +33,7 @@
 
 .blog-body h2 {
   font-family: var(--font-title);
+  font-variation-settings: var(--font-title-settings);
   color: var(--color-text);
   font-size: 1.4rem;
   font-weight: 700;
@@ -40,6 +42,7 @@
 
 .blog-body h3 {
   font-family: var(--font-title);
+  font-variation-settings: var(--font-title-settings);
   color: var(--color-text);
   font-size: 1.15rem;
   font-weight: 600;

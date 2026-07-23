@@ -193,6 +193,7 @@ section {
 ======================================== */
 .title {
   font-family: var(--font-title);
+  font-variation-settings: var(--font-title-settings);
   font-weight: 700;
   font-size: clamp(2.5rem, 7vw, 3.5rem);
   letter-spacing: -0.02em;
@@ -247,6 +248,7 @@ section {
 .talk-card .talk-title {
   display: inline-block;
   font-family: var(--font-title);
+  font-variation-settings: var(--font-title-settings);
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text);
