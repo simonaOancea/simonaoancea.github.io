@@ -51,8 +51,7 @@ export const engagements: Engagement[] = z.array(engagementSchema).parse([
     conference: 'W-JAX',
     conferenceUrl: 'https://jax.de/munich/',
     city: 'Munich',
-    date: '2026-11-02', // TODO: narrow to your talk day once the schedule is out
-    endDate: '2026-11-06',
+    date: '2026-11-04', // her slot: 15:15-16:15
     talk: 'modulith',
   },
 ]);
