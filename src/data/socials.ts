@@ -7,7 +7,8 @@ export const socials: Social[] = z.array(socialSchema).parse([
   { label: 'GitHub', url: 'https://github.com/simonaOancea', icon: 'github' },
   // TODO: replace with your real LinkedIn URL.
   { label: 'LinkedIn', url: 'https://www.linkedin.com/in/TODO-your-handle/', icon: 'linkedin' },
-  // TODO: replace with the address you want public (or delete this entry).
-  { label: 'Email', url: 'mailto:todo@example.com', icon: 'email' },
+  // Optional upgrade: hello@simonaoancea.com via Cloudflare Email Routing
+  // (free forwarding to this Gmail) — then just swap the string here.
+  { label: 'Email', url: 'mailto:simona.a.oancea@gmail.com', icon: 'email' },
   { label: 'RSS', url: '/rss.xml', icon: 'rss' },
 ]);
